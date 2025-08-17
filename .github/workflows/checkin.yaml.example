@@ -1,0 +1,35 @@
+name: AutoAsahXP
+
+on:
+  schedule:
+    - cron: '0 18 * * *'  # Jam 18:00 UTC = 01:00 WIB
+  workflow_dispatch:
+
+jobs:
+  checkin:
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      TZ: Asia/Jakarta
+    steps:
+      - name: Checkout Kode
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Instal Dependensi
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Jalankan Skrip Check-in Harian
+        run: python daily_checkin.py
+        env:
+          USER_ID: ${{ secrets.USER_ID }}
+          API_URL: ${{ secrets.API_URL }}
+          DICODING_COOKIES: ${{ secrets.DICODING_COOKIES }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
